@@ -1,6 +1,7 @@
 import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
 import { Delete } from "./api/Delete";
+import { Update } from "./api/Update";
 
 import "./App.css";
 
@@ -13,16 +14,23 @@ function App() {
     const toAdd = await Add("fresh");
     console.log("test add", toAdd.data);
   };
+  const HandleUpdate = async () => {
+    const toUpdate = await Update(3, "brush");
+    console.log("test update", toUpdate.data);
+  };
   const HandleDelete = async () => {
-    const toDelete = await Delete(5);
+    const toDelete = await Delete(7);
     console.log("test delete", toDelete.data);
   };
 
   return (
     <div className="App">
-      <button onClick={HandleGet}>test get</button>
-      <button onClick={HandlePost}>test add</button>
-      <button onClick={HandleDelete}>test delete</button>
+      <div className="test-api-section">
+        <button onClick={HandleGet}>test get</button>
+        <button onClick={HandlePost}>test add</button>
+        <button onClick={HandleUpdate}>test update</button>
+        <button onClick={HandleDelete}>test delete</button>
+      </div>
     </div>
   );
 }
