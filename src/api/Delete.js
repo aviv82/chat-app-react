@@ -1,24 +1,22 @@
+/**
+ * Complete the following function that
+ * removes the product with the given id
+ */
 import { ORIGIN } from "../config";
 
-export const Add = async (text) => {
-  const path = "tests";
-  const body = {
-    data: {
-      testext: text,
-    },
-  };
+export const Delete = async (productId) => {
+  const path = `tests/${productId}`;
   const url = encodeURI(`${ORIGIN}${path}`);
   const response = await fetch(url, {
-    method: "POST",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
   const result = await response.json();
-  console.log("add", result);
+  console.log("delete", result);
   return result;
 };
