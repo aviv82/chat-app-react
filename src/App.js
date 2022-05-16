@@ -1,6 +1,6 @@
 import "./App.css";
-// import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
@@ -10,6 +10,8 @@ import { Update } from "./api/Update";
 import { Intro } from "./intro-section/Intro";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const HandleGet = async () => {
     const toFetch = await Fetch("tests");
     console.log("test fetch", toFetch.data);
@@ -34,7 +36,7 @@ function App() {
           <h1 className="title">Chant</h1>
         </header>
         <Routes>
-          <Route path="/" element={<Intro />} />
+          <Route path="/" element={<Intro toShow={isLoggedIn} />} />
         </Routes>
         <div className="test-api-section">
           <button onClick={HandleGet}>test get</button>
