@@ -1,9 +1,13 @@
+import "./App.css";
+// import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
 import { Delete } from "./api/Delete";
 import { Update } from "./api/Update";
 
-import "./App.css";
+import { Intro } from "./intro-section/Intro";
 
 function App() {
   const HandleGet = async () => {
@@ -24,14 +28,22 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <div className="test-api-section">
-        <button onClick={HandleGet}>test get</button>
-        <button onClick={HandlePost}>test add</button>
-        <button onClick={HandleUpdate}>test update</button>
-        <button onClick={HandleDelete}>test delete</button>
+    <Router>
+      <div className="App">
+        <header className="head">
+          <h1 className="title">Chant</h1>
+        </header>
+        <Routes>
+          <Route path="/" element={<Intro />} />
+        </Routes>
+        <div className="test-api-section">
+          <button onClick={HandleGet}>test get</button>
+          <button onClick={HandlePost}>test add</button>
+          <button onClick={HandleUpdate}>test update</button>
+          <button onClick={HandleDelete}>test delete</button>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
