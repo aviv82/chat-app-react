@@ -1,10 +1,11 @@
 import { ORIGIN } from "../config";
 
-export const Add = async (text) => {
-  const path = "tests";
+export const Add = async (pathValue, name, pass) => {
+  const path = pathValue;
   const body = {
     data: {
-      testext: text,
+      userName: name,
+      password: pass,
     },
   };
   const url = encodeURI(`${ORIGIN}${path}`);

@@ -6,12 +6,44 @@ import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
 import { Delete } from "./api/Delete";
 import { Update } from "./api/Update";
+import { createUser } from "./logic/createUser";
 
-import { Intro } from "./intro-section/Intro";
+import { Intro } from "./component/intro-section/Intro";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [chanters, setChanters] = useState({});
+  const [loginWarn, setLoginWarn] = useState("");
 
+  const fetchChanters = async () => {
+    const result = await Fetch("chanters");
+    setChanters(result);
+  };
+
+  useEffect(() => {
+    fetchChanters();
+  }, []);
+
+  // console.log(chanters);
+  const handleCreateUser = (event) => {
+    const loginResult = createUser(event, chanters);
+    if (loginResult === 1) {
+      return setLoginWarn("please fill all required fields");
+    } else if (loginResult === 2) {
+      return setLoginWarn(
+        "chanter password must be longer than 4 characters and shorter than 20 characters"
+      );
+    } else if (loginResult === 3) {
+      return setLoginWarn("password and password confirmation do not match");
+    } else if (loginResult === 4) {
+      return setLoginWarn("Chanter name already exists");
+    }
+    Add("chanters", loginResult[0], loginResult[1]);
+    setIsLoggedIn(true);
+    fetchChanters();
+  };
+
+  useEffect(() => {}, [loginWarn]);
   const HandleGet = async () => {
     const toFetch = await Fetch("tests");
     console.log("test fetch", toFetch.data);
@@ -35,8 +67,18 @@ function App() {
         <header className="head">
           <h1 className="title">Chant</h1>
         </header>
+        {/* {!isLoggedIn ? <Intro /> : <></>} */}
         <Routes>
-          <Route path="/" element={<Intro toShow={isLoggedIn} />} />
+          <Route
+            path="/"
+            element={
+              <Intro
+                toShow={isLoggedIn}
+                spanText={loginWarn}
+                handleCreateUser={handleCreateUser}
+              />
+            }
+          />
         </Routes>
         <div className="test-api-section">
           <button onClick={HandleGet}>test get</button>
