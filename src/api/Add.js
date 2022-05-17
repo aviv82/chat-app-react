@@ -6,6 +6,7 @@ export const Add = async (pathValue, name, pass) => {
     data: {
       userName: name,
       password: pass,
+      // isLoggedIn: true
     },
   };
   const url = encodeURI(`${ORIGIN}${path}`);

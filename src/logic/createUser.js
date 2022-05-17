@@ -3,12 +3,15 @@ export const createUser = (event, userObject) => {
   const passValue = event.target.parentElement.children[1].value;
   const passConfirmValue = event.target.parentElement.children[2].value;
 
-  userObject.data.map((value) =>
-    value.attributes.userName === nameValue
-      ? console.log(true)
-      : console.log(false)
+  // userObject.data.map((value) =>
+  //   value.attributes.userName === nameValue
+  //     ? console.log(true)
+  //     : console.log(false)
+  // );
+  const array = userObject.data.filter(
+    (value) => value.attributes.userName === nameValue
   );
-
+  console.log("array", array);
   const index =
     nameValue.length === 0 ||
     passValue.length === 0 ||
@@ -18,9 +21,7 @@ export const createUser = (event, userObject) => {
       ? 2
       : passValue !== passConfirmValue
       ? 3
-      : userObject.data.map((value) =>
-          value.attributes.userName === nameValue ? true : false
-        )
+      : array === []
       ? 4
       : [nameValue, passValue];
   console.log(nameValue, passValue, passConfirmValue, userObject, index);
