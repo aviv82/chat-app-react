@@ -62,7 +62,9 @@ function App() {
     fetchChanters();
   };
 
-  useEffect(() => {}, [loginWarn]);
+  useEffect(() => {
+    fetchChanters();
+  }, [isLoggedIn]);
 
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
@@ -90,11 +92,11 @@ function App() {
             }
           />
         </Routes>
-        <div className="user-list">
-          <ul>
-            <UserList chanterObject={chanters.data} />
-          </ul>
-        </div>
+        {chanters.data ? (
+          <UserList chanterObject={chanters.data} />
+        ) : (
+          <li>Loading...</li>
+        )}
         <div className="test-api-section">
           <button onClick={HandleDelete}>test delete</button>
         </div>

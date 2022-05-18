@@ -1,16 +1,34 @@
 import "./UserList.css";
 
 export const UserList = ({ chanterObject }) => {
-  // const arrayOfChanters = chanterObject.map(
-  //   (chanter, index) => chanter.data[index].attributes.userName
-  // );
+  const onFilter = [];
+  const onList = [];
 
-  const name =
-    chanterObject === [] ? "" : String(chanterObject[0].attributes.userName);
-  // arrayOfChanters.map((name, i) => {
-  //   return <li key={i}>{name}</li>;
-  // });
+  const offFilter = [];
+  const offList = [];
 
-  console.log(String(chanterObject[0].attributes.userName));
-  return <li>{name}</li>;
+  onFilter.push(chanterObject.filter((item) => item.attributes.isLoggedIn));
+  onList.push(onFilter[0].map((name, i) => name.attributes.userName));
+  // console.log(onFilter, onList);
+
+  offFilter.push(chanterObject.filter((item) => !item.attributes.isLoggedIn));
+  offList.push(offFilter[0].map((name, i) => name.attributes.userName));
+  // console.log(offFilter, offList);
+
+  return (
+    <div className="user-list">
+      <p>Online</p>
+      <ul key={1}>
+        {onList[0].map((item, x) => (
+          <li key={x}>{item}</li>
+        ))}
+      </ul>
+      <p>Offline</p>
+      <ul key={2}>
+        {offList[0].map((item, x) => (
+          <li key={x}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
 };
