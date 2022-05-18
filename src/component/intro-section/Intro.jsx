@@ -1,6 +1,12 @@
 import "./Intro.css";
 
-export const Intro = ({ toShow, spanText, handleCreateUser, LoginHandler }) => {
+export const Intro = ({
+  toShow,
+  firstSpanText,
+  secondSpanText,
+  handleCreateUser,
+  handleLogin,
+}) => {
   if (toShow === false) {
     return (
       <div className="intro">
@@ -11,7 +17,7 @@ export const Intro = ({ toShow, spanText, handleCreateUser, LoginHandler }) => {
           To begin all you need to do is create a chanter username and password
           below.
         </p>
-        <span>{spanText}</span>
+        <span>{firstSpanText}</span>
         <div className="create-user">
           <input
             className="user-input"
@@ -32,11 +38,12 @@ export const Intro = ({ toShow, spanText, handleCreateUser, LoginHandler }) => {
             Create Chanter
           </button>
         </div>
+        <p>
+          Already have a Chant account? <br></br>
+          Log in below
+        </p>
+        <span>{secondSpanText}</span>
         <div className="login-user">
-          <p>
-            Already have a Chant account? <br></br>
-            Log in below
-          </p>
           <input
             className="user-input"
             type="input"
@@ -47,7 +54,7 @@ export const Intro = ({ toShow, spanText, handleCreateUser, LoginHandler }) => {
             type="input"
             placeholder="Chanter Password"
           ></input>
-          <button onClick={LoginHandler} className="user-btn">
+          <button onClick={handleLogin} className="user-btn">
             Log in to Chant
           </button>
         </div>

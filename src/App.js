@@ -7,12 +7,14 @@ import { Add } from "./api/Add";
 import { Delete } from "./api/Delete";
 import { Update } from "./api/Update";
 import { createUser } from "./logic/createUser";
+import { logInUser } from "./logic/logInUser";
 
 import { Intro } from "./component/intro-section/Intro";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chanters, setChanters] = useState({});
+  const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
 
   const fetchChanters = async () => {
@@ -26,32 +28,41 @@ function App() {
 
   // console.log(chanters);
   const handleCreateUser = (event) => {
-    const loginResult = createUser(event, chanters);
+    const createResult = createUser(event, chanters);
+    if (createResult === 1) {
+      return setCreateWarn("please fill all required fields");
+    } else if (createResult === 2) {
+      return setCreateWarn(
+        "chanter password must be longer than 4 characters and shorter than 20 characters"
+      );
+    } else if (createResult === 3) {
+      return setCreateWarn("password and password confirmation do not match");
+    } else if (createResult === 4) {
+      return setCreateWarn("Chanter name already exists");
+    }
+    Add("chanters", createResult[0], createResult[1]);
+    setIsLoggedIn(true);
+    fetchChanters();
+  };
+
+  const handleLogin = (event) => {
+    const loginResult = logInUser(event, chanters);
     if (loginResult === 1) {
       return setLoginWarn("please fill all required fields");
     } else if (loginResult === 2) {
       return setLoginWarn(
-        "chanter password must be longer than 4 characters and shorter than 20 characters"
+        "chanter name does not exist. if you do not already have a chant account please create one above"
       );
     } else if (loginResult === 3) {
-      return setLoginWarn("password and password confirmation do not match");
-    } else if (loginResult === 4) {
-      return setLoginWarn("Chanter name already exists");
+      return setLoginWarn("password incorrect. please try again");
     }
-    Add("chanters", loginResult[0], loginResult[1]);
+    Update("chanters", loginResult, true);
     setIsLoggedIn(true);
     fetchChanters();
   };
 
   useEffect(() => {}, [loginWarn]);
-  const HandleGet = async () => {
-    const toFetch = await Fetch("tests");
-    console.log("test fetch", toFetch.data);
-  };
-  const HandlePost = async () => {
-    const toAdd = await Add("fresh");
-    console.log("test add", toAdd.data);
-  };
+
   const HandleUpdate = async () => {
     const toUpdate = await Update(3, "brush");
     console.log("test update", toUpdate.data);
@@ -74,15 +85,15 @@ function App() {
             element={
               <Intro
                 toShow={isLoggedIn}
-                spanText={loginWarn}
+                firstSpanText={createWarn}
+                secondSpanText={loginWarn}
                 handleCreateUser={handleCreateUser}
+                handleLogin={handleLogin}
               />
             }
           />
         </Routes>
         <div className="test-api-section">
-          <button onClick={HandleGet}>test get</button>
-          <button onClick={HandlePost}>test add</button>
           <button onClick={HandleUpdate}>test update</button>
           <button onClick={HandleDelete}>test delete</button>
         </div>
