@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
@@ -11,6 +11,7 @@ import { logInUser } from "./logic/logInUser";
 
 import { Intro } from "./component/intro-section/Intro";
 import { UserList } from "./component/user-list/UserList";
+import { ChannelList } from "./component/channel-list/ChannelList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,6 +19,8 @@ function App() {
   const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
   const [channels, setChannels] = useState({});
+
+  const myChanterId = useRef(0);
 
   const fetchChanters = async () => {
     const result = await Fetch("chanters");
@@ -43,7 +46,8 @@ function App() {
       return setCreateWarn("Chanter name already exists");
     }
     Add("chanters", createResult[0], createResult[1]);
-    setIsLoggedIn(true);
+    setCreateWarn("Chanter created! Please login below");
+    setIsLoggedIn(false);
     fetchChanters();
   };
 
@@ -59,13 +63,21 @@ function App() {
       return setLoginWarn("password incorrect. please try again");
     }
     Update("chanters", loginResult, true);
+    myChanterId.current = loginResult;
     setIsLoggedIn(true);
+    fetchChanters();
+  };
+
+  const handleLogOut = () => {
+    setLoginWarn("LogOut successful. See you soon!");
+    Update("chanters", myChanterId.current, false);
+    setIsLoggedIn(false);
     fetchChanters();
   };
 
   useEffect(() => {
     fetchChanters();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, createWarn]);
 
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
@@ -74,10 +86,11 @@ function App() {
 
   return (
     <Router>
+      <header className="head">
+        <h1 className="title">Chant</h1>
+      </header>
       <div className="App">
-        <header className="head">
-          <h1 className="title">Chant</h1>
-        </header>
+        <ChannelList />
         {/* {!isLoggedIn ? <Intro /> : <></>} */}
         <Routes>
           <Route
@@ -94,13 +107,13 @@ function App() {
           />
         </Routes>
         {chanters.data ? (
-          <UserList chanterObject={chanters.data} />
+          <UserList chanterObject={chanters.data} handleLogOut={handleLogOut} />
         ) : (
           <li>Loading...</li>
         )}
-        <div className="test-api-section">
-          <button onClick={HandleDelete}>test delete</button>
-        </div>
+      </div>
+      <div className="test-api-section">
+        <button onClick={HandleDelete}>test delete</button>
       </div>
     </Router>
   );

@@ -1,6 +1,6 @@
 import "./UserList.css";
 
-export const UserList = ({ chanterObject }) => {
+export const UserList = ({ chanterObject, handleLogOut }) => {
   const onFilter = [];
   const onList = [];
 
@@ -30,6 +30,9 @@ export const UserList = ({ chanterObject }) => {
           <li key={x}>{item}</li>
         ))}
       </ul>
+      <button onClick={handleLogOut} className="logout-btn">
+        LogOut Chanter
+      </button>
     </div>
   );
 };
