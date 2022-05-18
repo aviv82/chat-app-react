@@ -6,11 +6,11 @@
  */
 import { ORIGIN } from "../config";
 
-export const Update = async (productId = 0, value = "") => {
-  const path = `tests/${productId}`;
+export const Update = async (category = "", id = 0, value = "") => {
+  const path = `${category}/${id}`;
   const body = {
     data: {
-      testext: value,
+      isLoggedIn: value,
     },
   };
   const url = encodeURI(`${ORIGIN}${path}`);
