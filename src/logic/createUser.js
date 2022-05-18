@@ -11,7 +11,7 @@ export const createUser = (event, userObject) => {
   const array = userObject.data.filter(
     (value) => value.attributes.userName === nameValue
   );
-  console.log("array", array, array[0].attributes.password);
+  console.log("array", array);
   const index =
     nameValue.length === 0 ||
     passValue.length === 0 ||

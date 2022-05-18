@@ -10,6 +10,7 @@ import { createUser } from "./logic/createUser";
 import { logInUser } from "./logic/logInUser";
 
 import { Intro } from "./component/intro-section/Intro";
+import { UserList } from "./component/user-list/UserList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -63,10 +64,6 @@ function App() {
 
   useEffect(() => {}, [loginWarn]);
 
-  const HandleUpdate = async () => {
-    const toUpdate = await Update(3, "brush");
-    console.log("test update", toUpdate.data);
-  };
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
     console.log("test delete", toDelete.data);
@@ -93,8 +90,12 @@ function App() {
             }
           />
         </Routes>
+        <div className="user-list">
+          <ul>
+            <UserList chanterObject={chanters.data} />
+          </ul>
+        </div>
         <div className="test-api-section">
-          <button onClick={HandleUpdate}>test update</button>
           <button onClick={HandleDelete}>test delete</button>
         </div>
       </div>
