@@ -17,6 +17,7 @@ export const UserList = ({ chanterObject }) => {
 
   return (
     <div className="user-list">
+      <h2>Chanters</h2>
       <p>Online</p>
       <ul key={1}>
         {onList[0].map((item, x) => (
