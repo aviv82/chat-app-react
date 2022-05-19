@@ -81,6 +81,7 @@ function App() {
   const handleLogOut = () => {
     setLoginWarn("LogOut successful. See you soon!");
     Update("chanters", myChanterId.current, false);
+    myChanterId.current = 0;
     setIsLoggedIn(false);
     fetchChanters();
   };
@@ -118,10 +119,16 @@ function App() {
         <h1 className="title">Chant</h1>
       </header>
       <div className="App">
-        <ChannelList
-          handleCreateChannel={handleCreateChannel}
-          span={channelWarn}
-        />
+        {channels.data ? (
+          <ChannelList
+            handleCreateChannel={handleCreateChannel}
+            span={channelWarn}
+            channelObject={channels}
+          />
+        ) : (
+          <li>Loading...</li>
+        )}
+
         <Routes>
           <Route
             path="/"

@@ -1,7 +1,7 @@
 export const createChannel = (event, channelObject, canCreate) => {
   const nameValue = event.target.parentElement.children[0].value;
   const channelArray = channelObject.data.filter(
-    (value) => value.attributes.userName === nameValue
+    (value) => value.attributes.name === nameValue
   );
   const channelIndex =
     canCreate === 0
