@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { Fetch } from "./api/Fetch";
 import { Add } from "./api/Add";
@@ -11,21 +11,33 @@ import { logInUser } from "./logic/logInUser";
 
 import { Intro } from "./component/intro-section/Intro";
 import { UserList } from "./component/user-list/UserList";
+import { ChannelList } from "./component/channel-list/ChannelList";
+import { createChannel } from "./logic/createChannel";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chanters, setChanters] = useState({});
   const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
-  // const [channels, setChannels] = useState({});
+
+  const [channels, setChannels] = useState({});
+  const [channelWarn, setChannelWarn] = useState("");
+
+  const myChanterId = useRef(0);
 
   const fetchChanters = async () => {
     const result = await Fetch("chanters");
     setChanters(result);
   };
 
+  const fetchChannels = async () => {
+    const channelResult = await Fetch("channels");
+    setChannels(channelResult);
+  };
+
   useEffect(() => {
     fetchChanters();
+    fetchChannels();
   }, []);
 
   // console.log(chanters);
@@ -42,8 +54,10 @@ function App() {
     } else if (createResult === 4) {
       return setCreateWarn("Chanter name already exists");
     }
-    Add("chanters", createResult[0], createResult[1]);
-    setIsLoggedIn(true);
+    Add("chanters", {
+      data: { userName: createResult[0], password: createResult[1] },
+    });
+    setCreateWarn("Chanter created! Please login below");
     fetchChanters();
   };
 
@@ -59,13 +73,40 @@ function App() {
       return setLoginWarn("password incorrect. please try again");
     }
     Update("chanters", loginResult, true);
+    myChanterId.current = loginResult;
     setIsLoggedIn(true);
+    fetchChanters();
+  };
+
+  const handleLogOut = () => {
+    setLoginWarn("LogOut successful. See you soon!");
+    Update("chanters", myChanterId.current, false);
+    myChanterId.current = 0;
+    setIsLoggedIn(false);
     fetchChanters();
   };
 
   useEffect(() => {
     fetchChanters();
-  }, [isLoggedIn]);
+  }, [isLoggedIn, createWarn]);
+
+  const handleCreateChannel = (event) => {
+    const createResult = createChannel(event, channels, myChanterId.current);
+    if (createResult === 1) {
+      return setChannelWarn(
+        "Please log in to Chant before creating or joining channels"
+      );
+    } else if (createResult === 2) {
+      return setChannelWarn("Please provide new channel name");
+    } else if (createResult === 3) {
+      return setChannelWarn(
+        "Channel already exists. Join by clicking on channel name in list above"
+      );
+    }
+    Add("channels", { data: { name: createResult } });
+    setChannelWarn("Channel created! Join by clicking on channel name above");
+    fetchChannels();
+  };
 
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
@@ -74,11 +115,20 @@ function App() {
 
   return (
     <Router>
+      <header className="head">
+        <h1 className="title">Chant</h1>
+      </header>
       <div className="App">
-        <header className="head">
-          <h1 className="title">Chant</h1>
-        </header>
-        {/* {!isLoggedIn ? <Intro /> : <></>} */}
+        {channels.data ? (
+          <ChannelList
+            handleCreateChannel={handleCreateChannel}
+            span={channelWarn}
+            channelObject={channels}
+          />
+        ) : (
+          <li>Loading...</li>
+        )}
+
         <Routes>
           <Route
             path="/"
@@ -94,13 +144,13 @@ function App() {
           />
         </Routes>
         {chanters.data ? (
-          <UserList chanterObject={chanters.data} />
+          <UserList chanterObject={chanters.data} handleLogOut={handleLogOut} />
         ) : (
           <li>Loading...</li>
         )}
-        <div className="test-api-section">
-          <button onClick={HandleDelete}>test delete</button>
-        </div>
+      </div>
+      <div className="test-api-section">
+        <button onClick={HandleDelete}>test delete</button>
       </div>
     </Router>
   );

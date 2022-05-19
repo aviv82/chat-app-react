@@ -15,7 +15,7 @@ export const Intro = ({
           We are a chat app designed to help you communicate with others!
           <br></br>
           To begin all you need to do is create a chanter username and password
-          below.
+          below
         </p>
         <span>{firstSpanText}</span>
         <div className="create-user">
@@ -35,7 +35,7 @@ export const Intro = ({
             placeholder="Confirm password"
           ></input>
           <button onClick={handleCreateUser} className="user-btn">
-            Create Chanter
+            Create New Chanter
           </button>
         </div>
         <p>

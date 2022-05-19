@@ -1,6 +1,6 @@
 import "./UserList.css";
 
-export const UserList = ({ chanterObject }) => {
+export const UserList = ({ chanterObject, handleLogOut }) => {
   const onFilter = [];
   const onList = [];
 
@@ -17,6 +17,7 @@ export const UserList = ({ chanterObject }) => {
 
   return (
     <div className="user-list">
+      <h2>Chanters</h2>
       <p>Online</p>
       <ul key={1}>
         {onList[0].map((item, x) => (
@@ -29,6 +30,9 @@ export const UserList = ({ chanterObject }) => {
           <li key={x}>{item}</li>
         ))}
       </ul>
+      <button onClick={handleLogOut} className="logout-btn">
+        LogOut Chanter
+      </button>
     </div>
   );
 };

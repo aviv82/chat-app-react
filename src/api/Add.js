@@ -1,14 +1,8 @@
 import { ORIGIN } from "../config";
 
-export const Add = async (pathValue, name, pass) => {
+export const Add = async (pathValue, content) => {
   const path = pathValue;
-  const body = {
-    data: {
-      userName: name,
-      password: pass,
-      // isLoggedIn: true
-    },
-  };
+  const body = content;
   const url = encodeURI(`${ORIGIN}${path}`);
   const response = await fetch(url, {
     method: "POST",
