@@ -12,13 +12,16 @@ import { logInUser } from "./logic/logInUser";
 import { Intro } from "./component/intro-section/Intro";
 import { UserList } from "./component/user-list/UserList";
 import { ChannelList } from "./component/channel-list/ChannelList";
+import { createChannel } from "./logic/createChannel";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chanters, setChanters] = useState({});
   const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
+
   const [channels, setChannels] = useState({});
+  const [channelWarn, setChannelWarn] = useState("");
 
   const myChanterId = useRef(0);
 
@@ -27,8 +30,14 @@ function App() {
     setChanters(result);
   };
 
+  const fetchChannels = async () => {
+    const channelResult = await Fetch("channels");
+    setChannels(channelResult);
+  };
+
   useEffect(() => {
     fetchChanters();
+    fetchChannels();
   }, []);
 
   // console.log(chanters);
@@ -45,9 +54,10 @@ function App() {
     } else if (createResult === 4) {
       return setCreateWarn("Chanter name already exists");
     }
-    Add("chanters", createResult[0], createResult[1]);
+    Add("chanters", {
+      data: { userName: createResult[0], password: createResult[1] },
+    });
     setCreateWarn("Chanter created! Please login below");
-    setIsLoggedIn(false);
     fetchChanters();
   };
 
@@ -79,6 +89,24 @@ function App() {
     fetchChanters();
   }, [isLoggedIn, createWarn]);
 
+  const handleCreateChannel = (event) => {
+    const createResult = createChannel(event, channels, myChanterId.current);
+    if (createResult === 1) {
+      return setChannelWarn(
+        "Please log in to Chant before creating or joining channels"
+      );
+    } else if (createResult === 2) {
+      return setChannelWarn("Please provide new channel name");
+    } else if (createResult === 3) {
+      return setChannelWarn(
+        "Channel already exists. Join by clicking on channel name in list above"
+      );
+    }
+    Add("channels", { data: { name: createResult } });
+    setChannelWarn("Channel created! Join by clicking on channel name above");
+    fetchChannels();
+  };
+
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
     console.log("test delete", toDelete.data);
@@ -90,8 +118,10 @@ function App() {
         <h1 className="title">Chant</h1>
       </header>
       <div className="App">
-        <ChannelList />
-        {/* {!isLoggedIn ? <Intro /> : <></>} */}
+        <ChannelList
+          handleCreateChannel={handleCreateChannel}
+          span={channelWarn}
+        />
         <Routes>
           <Route
             path="/"

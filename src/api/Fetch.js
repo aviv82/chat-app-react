@@ -10,6 +10,6 @@ export const Fetch = async (search) => {
     throw new Error(`${searchPromise.status}: ${searchPromise.statusText}`);
   }
   const searchData = await searchPromise.json();
-  // console.log("API fetch", searchData);
+  console.log("API fetch", searchData);
   return searchData;
 };
