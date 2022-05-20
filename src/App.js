@@ -13,17 +13,20 @@ import { Intro } from "./component/intro-section/Intro";
 import { UserList } from "./component/user-list/UserList";
 import { ChannelList } from "./component/channel-list/ChannelList";
 import { createChannel } from "./logic/createChannel";
+import { MessageList } from "./component/message-list/MessageList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chanters, setChanters] = useState({});
   const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
+  const [userWarn, setUserWarn] = useState("");
 
   const [channels, setChannels] = useState({});
   const [channelWarn, setChannelWarn] = useState("");
 
   const myChanterId = useRef(0);
+  const myChannel = useRef(["", 0]);
 
   const fetchChanters = async () => {
     const result = await Fetch("chanters");
@@ -42,6 +45,7 @@ function App() {
 
   // console.log(chanters);
   const handleCreateUser = (event) => {
+    setLoginWarn("");
     const createResult = createUser(event, chanters);
     if (createResult === 1) {
       return setCreateWarn("please fill all required fields");
@@ -62,6 +66,7 @@ function App() {
   };
 
   const handleLogin = (event) => {
+    setCreateWarn("");
     const loginResult = logInUser(event, chanters);
     if (loginResult === 1) {
       return setLoginWarn("please fill all required fields");
@@ -79,7 +84,7 @@ function App() {
   };
 
   const handleLogOut = () => {
-    setLoginWarn("LogOut successful. See you soon!");
+    setUserWarn("LogOut successful. See you soon!");
     Update("chanters", myChanterId.current, false);
     myChanterId.current = 0;
     setIsLoggedIn(false);
@@ -94,7 +99,7 @@ function App() {
     const createResult = createChannel(event, channels, myChanterId.current);
     if (createResult === 1) {
       return setChannelWarn(
-        "Please log in to Chant before creating or joining channels"
+        "Please log in to Chant before creating new channels"
       );
     } else if (createResult === 2) {
       return setChannelWarn("Please provide new channel name");
@@ -107,6 +112,34 @@ function App() {
     setChannelWarn("Channel created! Join by clicking on channel name above");
     fetchChannels();
   };
+
+  const handleLink = (event) => {
+    setChannelWarn("");
+    setUserWarn("");
+    // console.log(event.target.parentElement.parentElement.className);
+    if (
+      event.target.parentElement.parentElement.className === "channel-list" &&
+      !isLoggedIn
+    ) {
+      setChannelWarn("Please log in to Chant before joining a channel");
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      !isLoggedIn
+    ) {
+      setUserWarn("Please log in to Chant before messaging other chanters");
+    } else if (
+      isLoggedIn &&
+      event.target.parentElement.parentElement.className === "channel-list"
+    ) {
+      const channel = channels.data.filter(
+        (chan) => chan.attributes.name === event.target.innerHTML
+      );
+      myChannel.current = [channel[0].attributes.name, channel[0].id];
+    }
+  };
+  useEffect(() => {
+    fetchChannels();
+  }, [userWarn]);
 
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
@@ -124,27 +157,32 @@ function App() {
             handleCreateChannel={handleCreateChannel}
             span={channelWarn}
             channelObject={channels}
+            handleLink={handleLink}
           />
         ) : (
           <li>Loading...</li>
         )}
-
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Intro
-                toShow={isLoggedIn}
-                firstSpanText={createWarn}
-                secondSpanText={loginWarn}
-                handleCreateUser={handleCreateUser}
-                handleLogin={handleLogin}
-              />
-            }
+        {!isLoggedIn ? (
+          <Intro
+            firstSpanText={createWarn}
+            secondSpanText={loginWarn}
+            handleCreateUser={handleCreateUser}
+            handleLogin={handleLogin}
           />
-        </Routes>
+        ) : (
+          <MessageList chanName={myChannel.current} />
+        )}
+
+        {/* <Routes>
+          <Route path="/" />
+        </Routes> */}
         {chanters.data ? (
-          <UserList chanterObject={chanters.data} handleLogOut={handleLogOut} />
+          <UserList
+            handleLink={handleLink}
+            userSpan={userWarn}
+            chanterObject={chanters.data}
+            handleLogOut={handleLogOut}
+          />
         ) : (
           <li>Loading...</li>
         )}

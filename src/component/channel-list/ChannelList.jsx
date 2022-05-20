@@ -1,16 +1,25 @@
 import "./ChannelList.css";
+// import { Link } from "react-router-dom";
 
-export const ChannelList = ({ handleCreateChannel, span, channelObject }) => {
+export const ChannelList = ({
+  handleCreateChannel,
+  span,
+  channelObject,
+  handleLink,
+}) => {
   // console.log(channelObject.data);
+
   return (
     <div className="channel-list">
       <h2>Channels</h2>
-      <span>{span}</span>
       <ul>
         {channelObject.data.map((channel, n) => (
-          <li key={n}>{channel.attributes.name}</li>
+          <li onClick={handleLink} key={n}>
+            {channel.attributes.name}
+          </li>
         ))}
       </ul>
+      <span>{span}</span>
       <div className="create-section">
         <input
           className="channel-input"
