@@ -24,6 +24,7 @@ function App() {
 
   const [channels, setChannels] = useState({});
   const [channelWarn, setChannelWarn] = useState("");
+  const [messages, setMessages] = useState({});
 
   const myChanterId = useRef(0);
   const myChannel = useRef(["", 0]);
@@ -36,6 +37,11 @@ function App() {
   const fetchChannels = async () => {
     const channelResult = await Fetch("channels");
     setChannels(channelResult);
+  };
+
+  const fetchMessages = async () => {
+    const channelResult = await Fetch("messages");
+    setMessages(channelResult);
   };
 
   useEffect(() => {
@@ -84,6 +90,7 @@ function App() {
   };
 
   const handleLogOut = () => {
+    setChannelWarn("");
     setUserWarn("LogOut successful. See you soon!");
     Update("chanters", myChanterId.current, false);
     myChanterId.current = 0;
@@ -95,7 +102,12 @@ function App() {
     fetchChanters();
   }, [isLoggedIn, createWarn]);
 
+  useEffect(() => {
+    fetchMessages();
+  }, [isLoggedIn]);
+
   const handleCreateChannel = (event) => {
+    setUserWarn("");
     const createResult = createChannel(event, channels, myChanterId.current);
     if (createResult === 1) {
       return setChannelWarn(
@@ -113,10 +125,17 @@ function App() {
     fetchChannels();
   };
 
+  useEffect(() => {
+    fetchChannels();
+  }, [channelWarn]);
+
   const handleLink = (event) => {
     setChannelWarn("");
     setUserWarn("");
     // console.log(event.target.parentElement.parentElement.className);
+    const chanter = chanters.data.filter(
+      (chan) => chan.attributes.userName === event.target.innerHTML
+    );
     if (
       event.target.parentElement.parentElement.className === "channel-list" &&
       !isLoggedIn
@@ -134,12 +153,31 @@ function App() {
       const channel = channels.data.filter(
         (chan) => chan.attributes.name === event.target.innerHTML
       );
+      setUserWarn("");
       myChannel.current = [channel[0].attributes.name, channel[0].id];
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      isLoggedIn &&
+      chanter[0].id === myChanterId.current
+    ) {
+      setUserWarn("Chanters can't message themselves");
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      isLoggedIn
+    ) {
+      const channel = chanters.data.filter(
+        (chan) => chan.attributes.userName === event.target.innerHTML
+      );
+      setUserWarn("");
+      setChannelWarn("");
+      myChannel.current = [channel[0].attributes.userName, channel[0].id];
     }
-  };
-  useEffect(() => {
     fetchChannels();
-  }, [userWarn]);
+  };
+
+  const handleNewMessage = () => {
+    console.log("new message");
+  };
 
   const HandleDelete = async () => {
     const toDelete = await Delete(7);
@@ -170,7 +208,10 @@ function App() {
             handleLogin={handleLogin}
           />
         ) : (
-          <MessageList chanName={myChannel.current} />
+          <MessageList
+            handleNewMessage={handleNewMessage}
+            chanName={myChannel.current}
+          />
         )}
 
         {/* <Routes>

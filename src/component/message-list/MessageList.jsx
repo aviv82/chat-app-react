@@ -1,7 +1,7 @@
 import "./MessageList.css";
 
-export const MessageList = ({ chanName }) => {
-  console.log(chanName[0]);
+export const MessageList = ({ chanName, handleNewMessage }) => {
+  // console.log(chanName[0]);
   return (
     <div className="message-list">
       <h1>{chanName[0]}</h1>
@@ -11,7 +11,9 @@ export const MessageList = ({ chanName }) => {
           placeholder="Type new message"
           className="message-input"
         ></input>
-        <button className="message-btn">Submit</button>
+        <button onClick={handleNewMessage} className="message-btn">
+          Submit
+        </button>
       </div>
     </div>
   );
