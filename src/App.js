@@ -14,7 +14,6 @@ import { UserList } from "./component/user-list/UserList";
 import { ChannelList } from "./component/channel-list/ChannelList";
 import { createChannel } from "./logic/createChannel";
 import { MessageList } from "./component/message-list/MessageList";
-import { NewMessage } from "./component/message-list/NewMessage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,6 +47,7 @@ function App() {
   useEffect(() => {
     fetchChanters();
     fetchChannels();
+    fetchMessages();
   }, []);
 
   // console.log(chanters);
@@ -178,6 +178,7 @@ function App() {
       // console.log(myChannel.current[2]);
     }
     fetchChannels();
+    fetchMessages();
   };
 
   const handleNewMessage = (event) => {
@@ -254,6 +255,9 @@ function App() {
           <MessageList
             handleNewMessage={handleNewMessage}
             chanName={myChannel.current}
+            messagesToRender={messages.data}
+            senders={chanters.data}
+            active={myChanterId.current}
           />
         )}
 
