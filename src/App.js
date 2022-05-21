@@ -13,17 +13,21 @@ import { Intro } from "./component/intro-section/Intro";
 import { UserList } from "./component/user-list/UserList";
 import { ChannelList } from "./component/channel-list/ChannelList";
 import { createChannel } from "./logic/createChannel";
+import { MessageList } from "./component/message-list/MessageList";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [chanters, setChanters] = useState({});
   const [createWarn, setCreateWarn] = useState("");
   const [loginWarn, setLoginWarn] = useState("");
+  const [userWarn, setUserWarn] = useState("");
 
   const [channels, setChannels] = useState({});
   const [channelWarn, setChannelWarn] = useState("");
+  const [messages, setMessages] = useState({});
 
   const myChanterId = useRef(0);
+  const myChannel = useRef(["", 0, false]);
 
   const fetchChanters = async () => {
     const result = await Fetch("chanters");
@@ -35,13 +39,20 @@ function App() {
     setChannels(channelResult);
   };
 
+  const fetchMessages = async () => {
+    const channelResult = await Fetch("messages");
+    setMessages(channelResult);
+  };
+
   useEffect(() => {
     fetchChanters();
     fetchChannels();
+    fetchMessages();
   }, []);
 
   // console.log(chanters);
   const handleCreateUser = (event) => {
+    setLoginWarn("");
     const createResult = createUser(event, chanters);
     if (createResult === 1) {
       return setCreateWarn("please fill all required fields");
@@ -62,6 +73,7 @@ function App() {
   };
 
   const handleLogin = (event) => {
+    setCreateWarn("");
     const loginResult = logInUser(event, chanters);
     if (loginResult === 1) {
       return setLoginWarn("please fill all required fields");
@@ -79,7 +91,8 @@ function App() {
   };
 
   const handleLogOut = () => {
-    setLoginWarn("LogOut successful. See you soon!");
+    setChannelWarn("");
+    setUserWarn("LogOut successful. See you soon!");
     Update("chanters", myChanterId.current, false);
     myChanterId.current = 0;
     setIsLoggedIn(false);
@@ -90,11 +103,16 @@ function App() {
     fetchChanters();
   }, [isLoggedIn, createWarn]);
 
+  useEffect(() => {
+    fetchMessages();
+  }, [isLoggedIn]);
+
   const handleCreateChannel = (event) => {
+    setUserWarn("");
     const createResult = createChannel(event, channels, myChanterId.current);
     if (createResult === 1) {
       return setChannelWarn(
-        "Please log in to Chant before creating or joining channels"
+        "Please log in to Chant before creating new channels"
       );
     } else if (createResult === 2) {
       return setChannelWarn("Please provide new channel name");
@@ -103,9 +121,106 @@ function App() {
         "Channel already exists. Join by clicking on channel name in list above"
       );
     }
-    Add("channels", { data: { name: createResult } });
+    Add("channels", {
+      data: { name: createResult, chanter: myChanterId.current },
+    });
     setChannelWarn("Channel created! Join by clicking on channel name above");
     fetchChannels();
+  };
+
+  useEffect(() => {
+    fetchChannels();
+  }, [channelWarn]);
+
+  const handleLink = (event) => {
+    setChannelWarn("");
+    setUserWarn("");
+    // console.log(event.target.parentElement.parentElement.className);
+    const chanter = chanters.data.filter(
+      (chan) => chan.attributes.userName === event.target.innerHTML
+    );
+    if (
+      event.target.parentElement.parentElement.className === "channel-list" &&
+      !isLoggedIn
+    ) {
+      setChannelWarn("Please log in to Chant before joining a channel");
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      !isLoggedIn
+    ) {
+      setUserWarn("Please log in to Chant before messaging other chanters");
+    } else if (
+      isLoggedIn &&
+      event.target.parentElement.parentElement.className === "channel-list"
+    ) {
+      const channel = channels.data.filter(
+        (chan) => chan.attributes.name === event.target.innerHTML
+      );
+      setUserWarn("");
+      myChannel.current = [channel[0].attributes.name, channel[0].id, false];
+      // console.log(myChannel.current[2]);
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      isLoggedIn &&
+      chanter[0].id === myChanterId.current
+    ) {
+      setUserWarn("Chanters can't message themselves");
+    } else if (
+      event.target.parentElement.parentElement.className === "user-list" &&
+      isLoggedIn
+    ) {
+      const channel = chanters.data.filter(
+        (chan) => chan.attributes.userName === event.target.innerHTML
+      );
+      setUserWarn("");
+      setChannelWarn("");
+      myChannel.current = [channel[0].attributes.userName, channel[0].id, true];
+      // console.log(myChannel.current[2]);
+    }
+    fetchChannels();
+    fetchMessages();
+  };
+
+  const handleNewMessage = (event) => {
+    if (
+      event.target.parentElement.children[0].value !== "" &&
+      myChannel.current[1] !== 0
+    ) {
+      const message = [
+        myChannel.current[1],
+        myChannel.current[2],
+        event.target.parentElement.children[0].value,
+        myChanterId.current,
+      ];
+      if (message[1] === false) {
+        Add("messages", {
+          data: {
+            body: message[2],
+            sentBy: message[3],
+            sentTo: message[0],
+            isUser: message[1],
+            chanter: message[3],
+            channel: message[0],
+          },
+        });
+        fetchMessages();
+        return;
+      } else if (message[1] === true) {
+        Add("messages", {
+          data: {
+            body: message[2],
+            sentBy: message[3],
+            sentTo: message[0],
+            isUser: message[1],
+            chanter: message[3],
+          },
+        });
+        fetchMessages();
+        return;
+      }
+    }
+    console.log("nope");
+    return;
   };
 
   const HandleDelete = async () => {
@@ -124,27 +239,38 @@ function App() {
             handleCreateChannel={handleCreateChannel}
             span={channelWarn}
             channelObject={channels}
+            handleLink={handleLink}
           />
         ) : (
           <li>Loading...</li>
         )}
-
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Intro
-                toShow={isLoggedIn}
-                firstSpanText={createWarn}
-                secondSpanText={loginWarn}
-                handleCreateUser={handleCreateUser}
-                handleLogin={handleLogin}
-              />
-            }
+        {!isLoggedIn ? (
+          <Intro
+            firstSpanText={createWarn}
+            secondSpanText={loginWarn}
+            handleCreateUser={handleCreateUser}
+            handleLogin={handleLogin}
           />
-        </Routes>
+        ) : (
+          <MessageList
+            handleNewMessage={handleNewMessage}
+            chanName={myChannel.current}
+            messagesToRender={messages.data}
+            senders={chanters.data}
+            active={myChanterId.current}
+          />
+        )}
+
+        {/* <Routes>
+          <Route path="/" />
+        </Routes> */}
         {chanters.data ? (
-          <UserList chanterObject={chanters.data} handleLogOut={handleLogOut} />
+          <UserList
+            handleLink={handleLink}
+            userSpan={userWarn}
+            chanterObject={chanters.data}
+            handleLogOut={handleLogOut}
+          />
         ) : (
           <li>Loading...</li>
         )}
