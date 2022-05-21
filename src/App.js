@@ -14,6 +14,7 @@ import { UserList } from "./component/user-list/UserList";
 import { ChannelList } from "./component/channel-list/ChannelList";
 import { createChannel } from "./logic/createChannel";
 import { MessageList } from "./component/message-list/MessageList";
+import { NewMessage } from "./component/message-list/NewMessage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,7 +28,7 @@ function App() {
   const [messages, setMessages] = useState({});
 
   const myChanterId = useRef(0);
-  const myChannel = useRef(["", 0]);
+  const myChannel = useRef(["", 0, false]);
 
   const fetchChanters = async () => {
     const result = await Fetch("chanters");
@@ -120,7 +121,9 @@ function App() {
         "Channel already exists. Join by clicking on channel name in list above"
       );
     }
-    Add("channels", { data: { name: createResult } });
+    Add("channels", {
+      data: { name: createResult, chanter: myChanterId.current },
+    });
     setChannelWarn("Channel created! Join by clicking on channel name above");
     fetchChannels();
   };
@@ -154,7 +157,8 @@ function App() {
         (chan) => chan.attributes.name === event.target.innerHTML
       );
       setUserWarn("");
-      myChannel.current = [channel[0].attributes.name, channel[0].id];
+      myChannel.current = [channel[0].attributes.name, channel[0].id, false];
+      // console.log(myChannel.current[2]);
     } else if (
       event.target.parentElement.parentElement.className === "user-list" &&
       isLoggedIn &&
@@ -170,13 +174,52 @@ function App() {
       );
       setUserWarn("");
       setChannelWarn("");
-      myChannel.current = [channel[0].attributes.userName, channel[0].id];
+      myChannel.current = [channel[0].attributes.userName, channel[0].id, true];
+      // console.log(myChannel.current[2]);
     }
     fetchChannels();
   };
 
-  const handleNewMessage = () => {
-    console.log("new message");
+  const handleNewMessage = (event) => {
+    if (
+      event.target.parentElement.children[0].value !== "" &&
+      myChannel.current[1] !== 0
+    ) {
+      const message = [
+        myChannel.current[1],
+        myChannel.current[2],
+        event.target.parentElement.children[0].value,
+        myChanterId.current,
+      ];
+      if (message[1] === false) {
+        Add("messages", {
+          data: {
+            body: message[2],
+            sentBy: message[3],
+            sentTo: message[0],
+            isUser: message[1],
+            chanter: message[3],
+            channel: message[0],
+          },
+        });
+        fetchMessages();
+        return;
+      } else if (message[1] === true) {
+        Add("messages", {
+          data: {
+            body: message[2],
+            sentBy: message[3],
+            sentTo: message[0],
+            isUser: message[1],
+            chanter: message[3],
+          },
+        });
+        fetchMessages();
+        return;
+      }
+    }
+    console.log("nope");
+    return;
   };
 
   const HandleDelete = async () => {
