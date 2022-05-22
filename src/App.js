@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+// import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 
 import { Fetch } from "./api/Fetch";
@@ -111,12 +111,15 @@ function App() {
     setUserWarn("");
     const createResult = createChannel(event, channels, myChanterId.current);
     if (createResult === 1) {
+      event.target.parentElement.children[0].value = "";
       return setChannelWarn(
         "Please log in to Chant before creating new channels"
       );
     } else if (createResult === 2) {
+      event.target.parentElement.children[0].value = "";
       return setChannelWarn("Please provide new channel name");
     } else if (createResult === 3) {
+      event.target.parentElement.children[0].value = "";
       return setChannelWarn(
         "Channel already exists. Join by clicking on channel name in list above"
       );
@@ -126,6 +129,7 @@ function App() {
     });
     setChannelWarn("Channel created! Join by clicking on channel name above");
     fetchChannels();
+    event.target.parentElement.children[0].value = "";
   };
 
   useEffect(() => {
@@ -203,7 +207,10 @@ function App() {
             channel: message[0],
           },
         });
+        // console.log("new message", message);
         fetchMessages();
+        fetchChannels();
+        event.target.parentElement.children[0].value = "";
         return;
       } else if (message[1] === true) {
         Add("messages", {
@@ -215,11 +222,17 @@ function App() {
             chanter: message[3],
           },
         });
+        // console.log("new message", message);
         fetchMessages();
+        fetchChannels();
+        event.target.parentElement.children[0].value = "";
         return;
       }
     }
+    fetchMessages();
+    fetchChannels();
     console.log("nope");
+    event.target.parentElement.children[0].value = "";
     return;
   };
 
@@ -229,11 +242,11 @@ function App() {
   };
 
   return (
-    <Router>
+    <div className="App">
       <header className="head">
         <h1 className="title">Chant</h1>
       </header>
-      <div className="App">
+      <div className="mid">
         {channels.data ? (
           <ChannelList
             handleCreateChannel={handleCreateChannel}
@@ -278,7 +291,7 @@ function App() {
       <div className="test-api-section">
         <button onClick={HandleDelete}>test delete</button>
       </div>
-    </Router>
+    </div>
   );
 }
 

@@ -11,7 +11,8 @@ export const MessageList = ({
   // console.log(chanName[0]);
   return (
     <div className="message-list">
-      <h1>{chanName[0]}</h1>
+      {chanName[0] === "" ? <h1>Messages</h1> : <h1>{chanName[0]}</h1>}
+
       <NewMessage
         isUser={chanName[2]}
         location={chanName[1]}
