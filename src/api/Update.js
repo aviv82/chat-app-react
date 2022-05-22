@@ -25,6 +25,6 @@ export const Update = async (category = "", id = 0, value = "") => {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
   const result = await response.json();
-  console.log("update", result);
+  // console.log("update", result);
   return result;
 };

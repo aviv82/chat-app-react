@@ -11,6 +11,6 @@ export const createChannel = (event, channelObject, canCreate) => {
       : channelArray.length !== 0
       ? 3
       : nameValue;
-  console.log("array", nameValue, channelArray, channelIndex);
+  // console.log("array", nameValue, channelArray, channelIndex);
   return channelIndex;
 };

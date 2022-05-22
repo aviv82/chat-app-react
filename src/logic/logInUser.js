@@ -11,7 +11,7 @@ export const logInUser = (event, userObject) => {
     (value) => value.attributes.userName === nameValue
   );
 
-  console.log("array", isUser);
+  // console.log("array", isUser);
   const index =
     nameValue.length === 0 || passValue.length === 0
       ? 1
@@ -20,7 +20,7 @@ export const logInUser = (event, userObject) => {
       : isUser[0].attributes.password !== passValue
       ? 3
       : isUser[0].id;
-  console.log(nameValue, passValue, userObject, index);
+  // console.log(nameValue, passValue, userObject, index);
 
   return index;
 };

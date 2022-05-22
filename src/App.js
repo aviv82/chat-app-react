@@ -203,6 +203,7 @@ function App() {
             channel: message[0],
           },
         });
+        // console.log("new message", message);
         fetchMessages();
         return;
       } else if (message[1] === true) {
@@ -215,10 +216,12 @@ function App() {
             chanter: message[3],
           },
         });
+        // console.log("new message", message);
         fetchMessages();
         return;
       }
     }
+    fetchMessages();
     console.log("nope");
     return;
   };

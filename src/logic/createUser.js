@@ -11,7 +11,7 @@ export const createUser = (event, userObject) => {
   const array = userObject.data.filter(
     (value) => value.attributes.userName === nameValue
   );
-  console.log("array", array);
+  // console.log("array", array);
   const index =
     nameValue.length === 0 ||
     passValue.length === 0 ||
@@ -24,7 +24,7 @@ export const createUser = (event, userObject) => {
       : array.length !== 0
       ? 4
       : [nameValue, passValue];
-  console.log(nameValue, passValue, passConfirmValue, userObject, index);
+  // console.log(nameValue, passValue, passConfirmValue, userObject, index);
 
   return index;
 };
