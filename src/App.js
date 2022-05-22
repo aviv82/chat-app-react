@@ -55,14 +55,26 @@ function App() {
     setLoginWarn("");
     const createResult = createUser(event, chanters);
     if (createResult === 1) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
+      event.target.parentElement.children[2].value = "";
       return setCreateWarn("please fill all required fields");
     } else if (createResult === 2) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
+      event.target.parentElement.children[2].value = "";
       return setCreateWarn(
         "chanter password must be longer than 4 characters and shorter than 20 characters"
       );
     } else if (createResult === 3) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
+      event.target.parentElement.children[2].value = "";
       return setCreateWarn("password and password confirmation do not match");
     } else if (createResult === 4) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
+      event.target.parentElement.children[2].value = "";
       return setCreateWarn("Chanter name already exists");
     }
     Add("chanters", {
@@ -70,24 +82,35 @@ function App() {
     });
     setCreateWarn("Chanter created! Please login below");
     fetchChanters();
+    event.target.parentElement.children[0].value = "";
+    event.target.parentElement.children[1].value = "";
+    event.target.parentElement.children[2].value = "";
   };
 
   const handleLogin = (event) => {
     setCreateWarn("");
     const loginResult = logInUser(event, chanters);
     if (loginResult === 1) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
       return setLoginWarn("please fill all required fields");
     } else if (loginResult === 2) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
       return setLoginWarn(
         "chanter name does not exist. if you do not already have a chant account please create one above"
       );
     } else if (loginResult === 3) {
+      event.target.parentElement.children[0].value = "";
+      event.target.parentElement.children[1].value = "";
       return setLoginWarn("password incorrect. please try again");
     }
     Update("chanters", loginResult, true);
     myChanterId.current = loginResult;
     setIsLoggedIn(true);
     fetchChanters();
+    event.target.parentElement.children[0].value = "";
+    event.target.parentElement.children[1].value = "";
   };
 
   const handleLogOut = () => {

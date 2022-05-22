@@ -8,7 +8,7 @@ export const Intro = ({
 }) => {
   return (
     <div className="intro">
-      <h1>Welcome to Chant!</h1>
+      <h2>Welcome to Chant!</h2>
       <p>
         We are a chat app designed to help you communicate with others!
         <br></br>
@@ -24,12 +24,12 @@ export const Intro = ({
         ></input>
         <input
           className="user-input"
-          type="input"
+          type="password"
           placeholder="Create password"
         ></input>
         <input
           className="user-input"
-          type="input"
+          type="password"
           placeholder="Confirm password"
         ></input>
         <button onClick={handleCreateUser} className="user-btn">
@@ -49,7 +49,7 @@ export const Intro = ({
         ></input>
         <input
           className="user-input"
-          type="input"
+          type="password"
           placeholder="Chanter Password"
         ></input>
         <button onClick={handleLogin} className="user-btn">
