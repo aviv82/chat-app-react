@@ -22,10 +22,31 @@ export const NewMessage = ({
               (user) => user.id === rend.attributes.sentBy
             );
             // console.log(user);
+            if (rend.attributes.sentBy === active) {
+              return (
+                <li key={i}>
+                  <h3 key={i + 1}>{user[0].attributes.userName}</h3>
+                  <p key={i + 2}>
+                    {rend.attributes.createdAt.slice(8, 10)}
+                    {rend.attributes.createdAt.slice(4, 8)}
+                    {rend.attributes.createdAt.slice(0, 4)} at{" "}
+                    {rend.attributes.createdAt.slice(11, 16)}
+                  </p>
+                  <button key={i + 3}>Edit</button>
+                  <button key={i + 4}>Delete</button>
+                  <p key={i + 5}> {rend.attributes.body}</p>
+                </li>
+              );
+            }
             return (
               <li key={i}>
                 <h3 key={i + 1}>{user[0].attributes.userName}</h3>
-                <p key={i + 2}>{rend.attributes.createdAt}</p>
+                <p key={i + 2}>
+                  {rend.attributes.createdAt.slice(8, 10)}
+                  {rend.attributes.createdAt.slice(4, 8)}
+                  {rend.attributes.createdAt.slice(0, 4)} at{" "}
+                  {rend.attributes.createdAt.slice(11, 16)}
+                </p>
                 <p key={i + 3}> {rend.attributes.body}</p>
               </li>
             );
@@ -50,10 +71,31 @@ export const NewMessage = ({
               (user) => user.id === rend.attributes.sentBy
             );
             // console.log(user);
+            if (rend.attributes.sentBy === active) {
+              return (
+                <li key={i}>
+                  <h3 key={i + 1}>{user[0].attributes.userName}</h3>
+                  <p key={i + 2}>
+                    {rend.attributes.createdAt.slice(8, 10)}
+                    {rend.attributes.createdAt.slice(4, 8)}
+                    {rend.attributes.createdAt.slice(0, 4)} at{" "}
+                    {rend.attributes.createdAt.slice(11, 16)}
+                  </p>
+                  <button key={i + 3}>Edit</button>
+                  <button key={i + 4}>Delete</button>
+                  <p key={i + 5}> {rend.attributes.body}</p>
+                </li>
+              );
+            }
             return (
               <li key={i}>
                 <h3 key={i + 1}>{user[0].attributes.userName}</h3>
-                <p key={i + 2}>{rend.attributes.createdAt}</p>
+                <p key={i + 2}>
+                  {rend.attributes.createdAt.slice(8, 10)}
+                  {rend.attributes.createdAt.slice(4, 8)}
+                  {rend.attributes.createdAt.slice(0, 4)} at{" "}
+                  {rend.attributes.createdAt.slice(11, 16)}
+                </p>
                 <p key={i + 3}> {rend.attributes.body}</p>
               </li>
             );
